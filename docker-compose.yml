@@ -1,24 +1,32 @@
-version: '3.7'
+version: '2'
 services:
-  app:
-    build: ./app
+  server:
+    build: ./server
     links:
-      - mysql_db
+      - db
     ports:
       - "5000:5000"
-  mysql_db:
-    image: mysql:latest
-    restart: always
+  db:
+    image: mysql:5.7
     environment:
-      MYSQL_DATABASE: 'CFR'
-      MYSQL_USER: 'user'
-      MYSQL_PASSWORD: 'lori!'
-      MYSQL_ROOT_PASSWORD: 'lori!'
+      MYSQL_ROOT_PASSWORD: root
     ports:
-      - '3306:3306'
-    expose:
-      - '3306'
+      - '32000:3306'
     volumes:
-      - mysql_db_data:/var/lib/mysql
-volumes:
-  mysql_db_data:
+      - ./db:/docker-entrypoint-initdb.d/:ro
+  client:
+    build: ./client
+    ports:
+      - "5005:5005"
+    tty: true
+    stdin_open: true
+
+  admin:
+    build: ./admin
+    links:
+      - db
+    ports:
+      - "5010:5010"
+    tty: true
+    stdin_open: true
+
