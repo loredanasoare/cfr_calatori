@@ -1,4 +1,5 @@
 version: '2'
+
 services:
   server:
     build: ./server
@@ -6,14 +7,19 @@ services:
       - db
     ports:
       - "5000:5000"
+    depends_on:
+      - db
+
   db:
     image: mysql:5.7
+    container_name: mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
     ports:
-      - '32000:3306'
+      - "32000:3306"
     volumes:
       - ./db:/docker-entrypoint-initdb.d/:ro
+
   client:
     build: ./client
     ports:
@@ -27,6 +33,21 @@ services:
       - db
     ports:
       - "5010:5010"
+    depends_on:
+      - db
     tty: true
     stdin_open: true
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - 3000:3000
+    user: "0"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - db
+
+volumes:
+    grafana_data: {}
 

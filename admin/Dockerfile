@@ -8,6 +8,4 @@ COPY . /admin
 
 RUN pip install -r requirements.txt
 
-ENTRYPOINT python
-
 CMD python3 admin.py
