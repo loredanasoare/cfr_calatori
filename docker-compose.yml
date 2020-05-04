@@ -1,10 +1,8 @@
-version: '2'
+version: '3'
 
 services:
   server:
-    build: ./server
-    links:
-      - db
+    image: loredanasoare/cfr_calatori:server
     ports:
       - "5000:5000"
     depends_on:
@@ -12,25 +10,25 @@ services:
 
   db:
     image: mysql:5.7
-    container_name: mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
     ports:
       - "3306:3306"
+    expose:
+      - "3306"
     volumes:
-      - ./db:/docker-entrypoint-initdb.d/:ro
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - db_data:/var/lib/mysql
 
   client:
-    build: ./client
+    image: loredanasoare/cfr_calatori:client
     ports:
       - "5005:5005"
     tty: true
     stdin_open: true
 
   admin:
-    build: ./admin
-    links:
-      - db
+    image: loredanasoare/cfr_calatori:admin
     ports:
       - "5010:5010"
     depends_on:
@@ -49,5 +47,6 @@ services:
       - db
 
 volumes:
+    db_data: {}
     grafana_data: {}
 

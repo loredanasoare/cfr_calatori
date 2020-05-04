@@ -3,15 +3,10 @@ version: '3'
 services:
   server:
     image: loredanasoare/cfr_calatori:server
-    links:
-      - db
     ports:
       - "5000:5000"
     depends_on:
       - db
-    deploy:
-      restart_policy:
-        condition: on-failure
 
   db:
     image: mysql:5.7
@@ -22,7 +17,11 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - mysql_data:/var/lib/mysql
+      - ./db:/docker-entrypoint-initdb.d/:ro
+      - db_data:/var/lib/mysql:rw  
+    deploy:
+      placement:
+        constraints: [node.role == manager]
 
   client:
     image: loredanasoare/cfr_calatori:client
@@ -33,12 +32,11 @@ services:
 
   admin:
     image: loredanasoare/cfr_calatori:admin
-    links:
-      - db
     ports:
       - "5010:5010"
     depends_on:
       - db
+      - server
     tty: true
     stdin_open: true
 
@@ -50,8 +48,11 @@ services:
       - grafana_data:/var/lib/grafana
     depends_on:
       - db
+    deploy:
+      restart_policy:
+        condition: on-failure
 
 volumes:
-    mysql_data: {}
+    db_data: {}
     grafana_data: {}
 
