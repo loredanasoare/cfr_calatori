@@ -1,0 +1,57 @@
+version: '3'
+
+services:
+  server:
+    image: loredanasoare/cfr_calatori:server
+    links:
+      - db
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+  db:
+    image: mysql:5.7
+    hostname: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: CFR
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  client:
+    image: loredanasoare/cfr_calatori:client
+    ports:
+      - "5005:5005"
+    tty: true
+    stdin_open: true
+
+  admin:
+    image: loredanasoare/cfr_calatori:admin
+    links:
+      - db
+    ports:
+      - "5010:5010"
+    depends_on:
+      - db
+    tty: true
+    stdin_open: true
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - 3000:3000
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - db
+
+volumes:
+    mysql_data: {}
+    grafana_data: {}
+
