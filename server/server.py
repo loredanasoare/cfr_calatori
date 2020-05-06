@@ -262,9 +262,8 @@ def f3():
     id = request.args.get('id', default=None, type=int)
 
     ticketType = check_if_ticket_is_reserved(email, id)
-    if ticketType is None:
-        return jsonify(ticket="No reserved ticket")
-    elif ticketType.pop(0)[0] == "bought":
+
+    if ticketType.pop(0)[0] == "bought":
         return jsonify(ticket="The ticket has been already bought")
 
     delete_from_cart(email, id)
@@ -279,11 +278,6 @@ def f4():
     lN = request.args.get('lN', default=None, type=str)
     email = request.args.get('e', default=None, type=str)
     passwd = request.args.get('p', default=None, type=str)
-
-    email = check_if_email_exists(email)
-
-    if email is not None:
-        return jsonify(sign_in="This email already exists")
 
     sign_in(fN, lN, email, passwd)
     return jsonify(sign_in=True)

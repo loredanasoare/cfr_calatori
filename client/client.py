@@ -22,9 +22,7 @@ def main():
             response = urllib.request.urlopen(url)
             data = json.loads(response.read().decode())
 
-            if "exists" in data['sign_in']:
-                print("This email already exists")
-            if data['sign_in'][0] is True:
+            if data['sign_in'] is True:
                 print("You have successfully registered.\n")
 
         if "log_in" in command:
@@ -67,10 +65,6 @@ def main():
 
             if (trips["ticket"] != None):
                 print("Your ticket has been successfully reserved.\n")
-                [print(
-                    f"TripId: {trip[0]} | TicketType: {trip[1]}")
-                    for trip in trips['ticket']
-                ]
             else:
                 print("You cannot reserve the ticket.\n")
 
@@ -96,10 +90,6 @@ def main():
 
             if (trips["ticket"] != None):
                 print("Your ticket has been successfully bought.\n")
-                [print(
-                    f"TripId: {trip[0]} | TicketType: {trip[1]}")
-                    for trip in trips['ticket']
-                ]
             else:
                 print("You cannot buy the ticket.\n")
 
@@ -109,17 +99,10 @@ def main():
             response = urllib.request.urlopen(url)
             trips = json.loads(response.read().decode())
 
-            if "reserved" in trips['ticket'][0]:
-                print("No reserved ticket")
-            elif "bought" in trips['ticket'][0]:
+            if "bought" in trips['ticket'][0]:
                 print("The ticket has been already bought")
             else:
                 print("Your ticket has been successfully canceled.\n")
-                [print(
-                    f"TripId: {trip[0]} | TicketType: {trip[1]}")
-                    for trip in trips['ticket']
-                ]
-
 
 if __name__ == '__main__':
     main()
